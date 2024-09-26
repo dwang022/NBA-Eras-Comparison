@@ -1,0 +1,516 @@
+---
+title: "Sports Analytics"
+author: "Daniel Wang"
+date: "2022-10-28"
+output: pdf_document
+---
+
+
+```{r}
+library(tidyverse)
+library(dplyr)
+library(tidyr)
+library(readxl)
+library(readr)
+nba_data <- read_excel("NBA_DATA.xlsx")
+View(nba_data)
+
+```
+
+```{r}
+nba_stats <- nba_data %>%
+ select(Season, Pace, PTS) %>%
+  na.omit() %>%
+  ggplot(aes(x = Season, y = Pace, group = 1)) + geom_point(size = 2) + geom_smooth() + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) + labs(title = "Change in NBA League Average Pace by Season")
+nba_stats
+
+ggsave("pace.jpeg")
+```
+
+```{r}
+nba_data %>%
+  select(Season, Pace, PTS) %>%
+  na.omit() %>%
+  ggplot(aes(x = Season, y = Pace, group = 1)) +
+  geom_point(size = 3, color = "blue") +  # Increase point size and set color
+  geom_smooth(method = "loess", se = TRUE, linetype = "dashed", color = "red") +  # Adjust smoothed line appearance
+  labs(
+    title = "Change in NBA League Average Pace by Season",
+    x = "Season",
+    y = "Pace (Possessions per 48 Minutes)"
+  ) +
+  theme(
+    axis.text.x = element_text(angle = 58, hjust = 1, vjust = 1),
+    plot.title = element_text(hjust = 0.5)
+  )
+
+ggsave("NEW_PACE.png")
+```
+
+
+
+```{r}
+nba_data %>%
+  select(Season, Pace, PTS, '3PA') %>%
+  na.omit() %>%
+  ggplot(aes(x = Pace, y = PTS)) + geom_point(size = 2) + geom_smooth() + labs(y = "Points", title = "Relationship Between Pace and a Team's Average Points Scored")
+
+ggsave("pacevspoints2.jpeg")
+```
+
+```{r}
+nba_data %>%
+  select(Season, Pace, PTS, '3PA') %>%
+  na.omit() %>%
+  ggplot(aes(x = Pace, y = PTS)) +
+  geom_point(size = 3, alpha = 0.7, color = "blue") +  # Add transparency and adjust point color
+  geom_smooth(method = "loess", se = FALSE, linetype = "dashed", color = "red") +  # Adjust smoothed line appearance
+  labs(
+    y = "Points",
+    title = "Relationship Between Pace and a Team's Average Points Scored"
+  ) +
+  theme(
+    axis.text = element_text(size = 10),
+    plot.title = element_text(hjust = 0.5)
+  )
+
+ggsave("NEW_pacevspoints.png")
+```
+
+
+
+```{r}
+nba_data %>%
+  select(Season, Pace, PTS, '3PA') %>%
+  rename(TPA = '3PA') %>%
+  na.omit() %>%
+  ggplot(aes(x = Season, y = TPA, group = 1)) + geom_point(size = 2) + geom_smooth() + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) + labs(y = "Three Point Attempts", title = "Average Volume of Three Point Attempts Per Team by Season")
+
+ggsave("threepointers.jpeg")
+```
+
+```{r}
+nba_data %>%
+  select(Season, Pace, PTS, '3PA') %>%
+  rename(TPA = '3PA') %>%
+  na.omit() %>%
+  ggplot(aes(x = Season, y = TPA, group = 1)) +
+  geom_point(size = 3, alpha = 0.7, color = "blue") +  # Add transparency and adjust point color
+  geom_smooth(method = "loess", se = FALSE, linetype = "dashed", color = "red") +  # Adjust smoothed line appearance
+  labs(
+    y = "Three Point Attempts Per Game",
+    title = "Average Volume of Three Point Attempts Per Team by Season"
+  ) +
+  theme(
+    axis.text.x = element_text(angle = 58, hjust = 1, vjust = 1),
+    axis.text = element_text(size = 10),
+    plot.title = element_text(hjust = 0.5)
+  )
+
+ggsave("NEW_threepointers.png")
+```
+
+
+```{r}
+nba_data %>%
+  select(Season, Pace, PTS, '3PA', ORtg) %>%
+  na.omit() %>%
+  ggplot(aes(x = Season, y = ORtg, group = 1)) + geom_point(size = 2) + geom_smooth() + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) + labs(y = "Offensive Rating", title = "Change in Offensive Rating by Season")
+
+ggsave("offensiveefficiency2.jpeg")
+```
+
+```{r}
+nba_data %>%
+  select(Season, Pace, PTS, '3PA', ORtg) %>%
+  na.omit() %>%
+  ggplot(aes(x = Season, y = ORtg, group = 1)) +
+  geom_point(size = 3, alpha = 0.7, color = "blue") +  # Add transparency and adjust point color
+  geom_smooth(method = "loess", se = TRUE, linetype = "dashed", color = "red") +  # Add confidence intervals
+  labs(
+    y = "Offensive Rating",
+    title = "Change in Offensive Rating by Season"
+  ) +
+  theme(
+    axis.text.x = element_text(angle = 58, hjust = 1, vjust = 1),
+    axis.text = element_text(size = 10),
+    plot.title = element_text(hjust = 0.5)
+  )
+
+ggsave("NEW_offensiverating.png")
+```
+
+
+```{r}
+nba_data %>%
+  select(Season, Pace, `eFG%`) %>%
+  na.omit() %>%
+  ggplot(aes(x = Season, y = `eFG%`, group = 1)) + geom_point(size = 2) + geom_smooth() + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+```
+```{r}
+nba_data %>%
+  select(Season, Pace, ORB) %>%
+  na.omit() %>%
+  ggplot(aes(x = Pace, y = ORB, group = 1)) + geom_point(size = 2) + geom_smooth() + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) + labs(y = "Offensive Rebounds")
+```
+
+
+```{r}
+nba_data %>%
+  select(Season, Pace, PTS) %>%
+  na.omit() %>%
+  ggplot(aes(x = Season, y = PTS, group = 1)) + geom_point(size = 2) + geom_smooth() + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) + labs(y = "Points", title = "League Average Points Scored Per Team Per Game by Season")
+
+ggsave("points.jpeg")
+```
+
+```{r}
+nba_data %>%
+  select(Season, Pace, PTS) %>%
+  na.omit() %>%
+  ggplot(aes(x = Season, y = PTS, group = 1)) +
+  geom_point(size = 3, alpha = 0.7, color = "blue") +  # Add transparency and adjust point color
+  geom_smooth(method = "loess", se = FALSE, linetype = "dashed", color = "red") +  # Adjust smoothed line appearance
+  labs(
+    y = "Points",
+    title = "League Average Points Scored Per Team Per Game by Season"
+  ) +
+  theme(
+    axis.text.x = element_text(angle = 58, hjust = 1, vjust = 1),
+    plot.title = element_text(hjust = 0.5)
+  )
+
+ggsave("NEW_points.png")
+```
+
+
+```{r}
+nba_data %>%
+  select(Season, Pace, AST) %>%
+  na.omit() %>%
+  ggplot(aes(x = Season, y = AST, group = 1)) + geom_point(size = 2) + geom_smooth() + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+```
+
+```{r}
+nba_data %>%
+  select(Season, Pace, ORtg) %>%
+  na.omit() %>%
+  ggplot(aes(x = Pace, y = ORtg)) + geom_point(size = 2) + geom_smooth() + labs(y = "Offensive Rating", title = "Relationship Between Pace and Offensive Efficiency in the NBA")
+
+ggsave("pacevsoffensiveefficiency.jpeg")
+```
+
+
+```{r}
+nba_data %>%
+  select(Season, Pace, `eFG%`) %>%
+  na.omit() %>%
+  ggplot(aes(x = Pace, y = `eFG%`)) + geom_point(size = 2) + geom_smooth()
+```
+
+
+
+```{r}
+library(readxl)
+nbadata5 <- read_excel("nba_test_data.xls")
+nbadata5 %>%
+  filter(PTS <= 150) %>%
+  ggplot(aes(x = Season, y = PTS)) + geom_point()
+nbadata5 %>%
+  filter(PTS <= 150) %>%
+  ggplot(aes(x = Season, y = TRB)) + geom_point()
+nbadata5 %>%
+  filter(PTS <= 150) %>%
+  ggplot(aes(x = Season, y =AST)) + geom_point()
+nbadata5 %>%
+  filter(PTS <= 150) %>%
+  ggplot(aes(x = Season, y = ORtg)) + geom_point()
+nbadata5 %>%
+  filter(PTS <= 150) %>%
+  ggplot(aes(x = Season, y = `eFG%`)) + geom_point()
+```
+
+```{r}
+```
+
+
+
+```{r}
+official_inflation %>%
+  filter(Stat %in% c("Adjusted Assists", "Adjusted Points", "Adjusted Rebounds")) %>%
+  ggplot(aes(reorder(x = Player, Season), y = Value, fill = Stat)) + geom_col(position = "dodge") + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) + labs(title = "Adjusted Statistics of Top NBA Players from Different Seasons", x = "Player") 
+
+ggsave("adjustedstatstopplayers.jpeg")
+```
+
+```{r}
+official_inflation %>%
+  filter(Stat %in% c("Adjusted Assists", "Adjusted Points", "Adjusted Rebounds")) %>%
+  ggplot(aes(reorder(x = Player, Season), y = Value, fill = Stat)) +
+  geom_col(position = position_dodge(width = 0.8), width = 0.7) +  # Adjust bar width
+  scale_fill_manual(values = c("#1f78b4", "#33a02c", "#e31a1c")) +  # Use a custom color palette
+  labs(
+    title = "Adjusted Statistics of Top NBA Players from Different Seasons",
+    x = "Player",
+    y = "Value"
+  ) +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1),
+    plot.title = element_text(hjust = 0.5),
+    legend.position = "bottom"  # Move legend to the bottom
+  )
+
+ggsave("NEW_adjustedstats.png")
+```
+
+```{r}
+official_inflation %>%
+  filter(Stat == "rTS%") %>%
+  ggplot(aes(reorder(x = Player, Season), y = Value, fill = Player)) + geom_col(position = "dodge") + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) + labs(y = "rTS%", title = "Relative True Shooting Percentage of Top NBA Players from Different Seasons", x = "Player") + theme(legend.position = "none")
+
+ggsave("relativetstopplayers.jpeg")
+```
+
+```{r}
+
+official_inflation %>%
+  filter(Stat == "rTS%") %>%
+  ggplot(aes(reorder(x = Player, Season), y = Value)) +
+  geom_col(position = position_dodge(width = 0.8), width = 0.7, fill = "#33a02c") +  # Adjust bar width
+  labs(
+    title = "Relative True Shooting Percentage of Top NBA Players from Different Seasons",
+    x = "Player",
+    y = "rTS%"
+  ) +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1),
+    axis.text.y = element_text(size = 10),
+    plot.title = element_text(hjust = 0.5)
+  )
+
+ggsave("NEW_relativeTS.png")
+```
+
+
+
+
+bar chart comparing player's adjusted stats
+- one for points, one for assists, one for rebounds, one for relative TS%
+
+bar chart comparing player's standard deviations
+x = player, y= value, color = category
+
+```{r}
+inflation_stats_sa %>%
+  slice(1:9) %>%
+  ggplot(aes(x = Player, y = `Adj Pts`)) + geom_col() + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+inflation_stats_sa %>%
+  slice(1:9) %>%
+  ggplot(aes(x = Player, y = Points)) + geom_col() + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+inflation_stats_sa %>%
+  slice(1:9) %>%
+  ggplot(aes(x = Player, y = `Adj Ast`)) + geom_col() + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+inflation_stats_sa %>%
+  slice(1:9) %>%
+  ggplot(aes(x = Player, y = `Adj Reb`)) + geom_col() + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+inflation_stats_sa %>%
+  slice(1:9) %>%
+  ggplot(aes(x = Player, y = `rTS%`)) + geom_col() + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+```
+  
+```{r}
+reggie_klay %>%
+  filter(Value >= 1) %>%
+  ggplot(aes(x = Player, y = Value, fill = Stat)) + geom_col(position = "dodge") + labs(title = "Klay Thompson vs Reggie Miller Adjusted Statistics") + geom_text(aes(label = Value), vjust = -0.5, position = position_dodge(1))  + scale_fill_discrete(labels = c("Adjusted Assists", "Adjustd Points", "Adjusted Rebounds"))
+
+ggsave("reggieklaypra.jpeg")
+```
+
+```{r}
+reggie_klay %>%
+  filter(Value >= 1) %>%
+  ggplot(aes(x = Player, y = Value, fill = Stat)) +
+  geom_col(position = position_dodge(width = 0.8), width = 0.7, alpha = 0.8) +  # Adjust bar width and add transparency
+    scale_fill_manual(values = c("#1f78b4", "#33a02c", "#e31a1c")) +  # Use a custom color palette  # Use a different color palette
+  labs(
+    title = "Klay Thompson vs Reggie Miller Adjusted Statistics",
+    x = "Player",
+    y = "Value"
+  ) +
+  geom_text(aes(label = Value), vjust = -0.5, position = position_dodge(width = 0.8), size = 3) +  # Adjust text position and size
+  theme(
+    axis.text = element_text(size = 10),
+    plot.title = element_text(hjust = 0.5),
+    legend.position = "bottom"
+  )
+
+ggsave("NEW_reggieklayPRA.png")
+```
+
+
+```{r}
+reggie_klay %>%
+  filter(Value < 0.1) %>%
+   ggplot(aes(x = Player, y = Value, fill = Stat)) + geom_col(position = "dodge") + labs(title = "Klay Thompson vs Reggie Miller Relative Efficiency") + geom_text(aes(label = Value), vjust = -0.5, position = position_dodge(1))
+
+ggsave("reggieklayefficiency.jpeg")
+```
+
+```{r}
+
+reggie_klay %>%
+  filter(Value < 0.1) %>%
+  ggplot(aes(x = Player, y = Value, fill = Stat)) +
+  geom_col(position = position_dodge(width = 0.8), width = 0.7, color = "black") +  # Adjust bar width and add borders
+  scale_fill_brewer(palette = "Set3") +  # Use a different color palette
+  labs(
+    title = "Klay Thompson vs Reggie Miller Relative Efficiency",
+    x = "Player",
+    y = "Value"
+  ) +
+  geom_text(aes(label = round(Value, 3)), vjust = -0.5, position = position_dodge(width = 0.8), size = 3) +  # Adjust text position, size, and round values
+  theme(
+    axis.text = element_text(size = 10),
+    plot.title = element_text(hjust = 0.5),
+    legend.position = "bottom"  # Move legend to the bottom
+  )
+
+ggsave("NEW_reggieklayefficiency.png")
+```
+
+  
+  
+  
+```{r}
+nash_haliburton %>%
+  filter(Value >= 1) %>%
+  ggplot(aes(x = Player, y = Value, fill = reorder(Stat, -Value))) + geom_col(position = "dodge") + labs(title = "Steve Nash MVP Season vs Tyrese Haliburton 2022-23 Adjusted Stats") + geom_text(aes(label = Value), vjust = -0.5, position = position_dodge(1)) + scale_fill_discrete(name = "Stat")
+
+ggsave("nashhaliburtonpra.jpeg")
+```
+
+
+```{r}
+nash_haliburton %>%
+  filter(Value >= 1) %>%
+  ggplot(aes(x = Player, y = Value, fill = reorder(Stat, -Value))) +
+  geom_col(position = position_dodge(width = 0.8), width = 0.7, color = "black") +  # Adjust bar width and add borders
+  labs(
+    title = "Steve Nash MVP Season vs Tyrese Haliburton 2022-23 Adjusted Stats",
+    x = "Player",
+    y = "Value"
+  ) +
+  geom_text(aes(label = round(Value, 3)), vjust = -0.5, position = position_dodge(width = 0.8), size = 3) +  # Adjust text position, size, and round values
+  theme(
+    axis.text = element_text(size = 10),
+    plot.title = element_text(hjust = 0.5),
+    legend.position = "bottom"  # Move legend to the bottom
+  ) +  scale_fill_manual(name = "Stat", values = c("#1f78b4", "#33a02c"))  # Use a custom color palette  # Use a different color palette
+
+ggsave("NEW_nashvshaliburtonPRA.png")
+
+```
+
+
+```{r}
+nash_haliburton %>%
+  filter(Stat %in% c("rTS%", "rFG%", "r3P%")) %>%
+  ggplot(aes(x = Player, y = Value, fill = Stat)) + geom_col(position = "dodge") + labs(title = "Steve Nash MVP Season vs Tyrese Haliburton 2022-23 Relative Efficiency") + geom_text(aes(label = Value), vjust = -0.5, position = position_dodge(1)) + scale_fill_discrete(name = "Stat")
+
+ggsave("nashhaliburtonefficiency.jpeg")
+```
+
+
+```{r}
+nash_haliburton %>%
+  filter(Stat %in% c("rTS%", "rFG%", "r3P%")) %>%
+  ggplot(aes(x = Player, y = Value, fill = Stat)) +
+  geom_col(position = position_dodge(width = 0.8), width = 0.7, color = "black") +  # Adjust bar width and add borders
+  scale_fill_brewer(palette = "Set3") +  # Use a different color palette
+  labs(
+    title = "Steve Nash MVP Season vs Tyrese Haliburton 2022-23 Relative Efficiency",
+    x = "Player",
+    y = "Value"
+  ) +
+  geom_text(aes(label = round(Value, 3)), vjust = -0.5, position = position_dodge(width = 0.8), size = 3) +  # Adjust text position, size, and round values
+  theme(
+    axis.text = element_text(size = 10),
+    plot.title = element_text(hjust = 0.5),
+    legend.position = "bottom"  # Move legend to the bottom
+  )
+
+ggsave("NEW_nashvshaliburtonefficiency.PNG")
+```
+
+
+```{r}
+lebron_mj_kobe %>%
+  ggplot(aes(x = Player, y = Value)) + geom_col() + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) + geom_text(aes(label = Value)) + labs(y = "Standard Deviations", title = "Comparing the Relative Dominance of LeBron, Jordan, and Kobe") + theme(legend.position = "none")
+```
+```{r}
+lebron_mj_kobe_test %>%
+  ggplot(aes(x = Player, y= Value, fill = Stat)) + geom_col() + labs(y = "Standard Deviations", title = "Comparing the Relative Dominance of LeBron, Jordan, and Kobe")
+```
+  
+```{r}
+lebron_mj_kobe_test %>%
+  ggplot(aes(x = Player, y = Value, fill = reorder(Stat, -Value))) + geom_col(position = "dodge") + labs(y = "Standard Deviations", title = "Comparing the Relative Dominance of Jordan, Kobe, and LeBron") + scale_x_discrete(labels = c("Michael Jordan (1990-91)", "Kobe Bryant (2005-06)", "LeBron James (2011-12)")) + scale_fill_discrete(name = "Stat")
+
+ggsave("lebronjordankobe2.jpeg")
+```
+
+```{r}
+lebron_mj_kobe_test %>%
+  ggplot(aes(x = reorder(Stat, -Value), y = Value, fill = Player)) + geom_col(position = "dodge") + labs(y = "Standard Deviations", title = "Comparing the Relative Dominance of Jordan, Kobe, and LeBron") + scale_fill_discrete(name = "Player") + xlab("Stat")
+```
+
+
+```{r}
+lebron_mj_kobe_test %>%
+  ggplot(aes(x = reorder(Stat, -Value), y = Value, fill = Player)) +
+  geom_col(position = position_dodge(width = 0.8), width = 0.7, color = "black") +  # Adjust bar width and add borders
+ scale_fill_manual(values = c("#1f78b4", "#33a02c", "#e31a1c")) +  labs(
+    title = "Comparing the Relative Dominance of Jordan, Kobe, and LeBron",
+    x = "Stat",
+    y = "Standard Deviations"
+  ) +
+  theme(
+    axis.text = element_text(size = 10),
+    plot.title = element_text(hjust = 0.5),
+    legend.position = "bottom"  # Move legend to the bottom
+  )
+
+ggsave("NEW_lebronjordankobe.png")
+```
+
+
+reorder(Stat, -Value)
++ scale_x_discrete(labels = c("Michael Jordan (1990-91)", "Kobe Bryant (2005-06)", "LeBron James (2011-12)")) 
+
+  
+```{r}
+Oscar_Magic_Curry %>%
+  ggplot(aes(x = reorder(Stat, -Value), y = Value, fill = reorder(Player, Season))) + geom_col(position = "dodge") + labs(y = "Standard Deviations", title = "Comparing the Relative Dominance of Oscar, Magic, and Curry", x = "Stat") + scale_fill_discrete(name = "Player") 
+
+ggsave("oscarmagiccurry.jpeg")
+```
+
+```{r}
+Oscar_Magic_Curry %>%
+  ggplot(aes(x = reorder(Stat, -Value), y = Value, fill = reorder(Player, Season))) +
+  geom_col(position = position_dodge(width = 0.8), width = 0.7, color = "black") +  # Adjust bar width and add borders
+  scale_fill_brewer(palette = "Set2", name = "Player") +  # Use a different color palette
+  labs(
+    title = "Comparing the Relative Dominance of Oscar, Magic, and Curry",
+    x = "Stat",
+    y = "Standard Deviations"
+  ) +
+  theme(
+    axis.text = element_text(size = 10),
+    plot.title = element_text(hjust = 0.5),
+    legend.position = "bottom"  # Move legend to the bottom
+  ) 
+
+ggsave("NEW_oscarmagiccurry.png")
+```
+
